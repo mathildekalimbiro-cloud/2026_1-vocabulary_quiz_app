@@ -16,6 +16,7 @@ class VocabularyQuizApp:
         self.checked = False
         self.score = 0
         self.total = 0
+        self.wrong_answers = []
 
         self.default_font = font.nametofont("TkDefaultFont")
         self.default_font.configure(family="NanumGothic", size=12)
@@ -34,13 +35,27 @@ class VocabularyQuizApp:
         self.answer_entry = ttk.Entry(root, font=("NanumGothic", 14))
         self.answer_entry.pack(pady=12, ipadx=6, ipady=4)
 
-        buttons = ttk.Frame(root)
-        buttons.pack(pady=6)
-        self.check_button = ttk.Button(buttons, text="채점", command=self.check_current)
+      buttons = ttk.Frame(root)
+      buttons.pack(pady=6)
+
+        self.check_button = ttk.Button(
+        buttons,
+        text="채점",
+        command=self.check_current,
+    )
         self.check_button.pack(side=tk.LEFT, padx=6)
-        ttk.Button(buttons, text="다음", command=self.next_word).pack(
-            side=tk.LEFT, padx=6
-        )
+
+        ttk.Button(
+        buttons,
+        text="다음",
+        command=self.next_word,
+     ).pack(side=tk.LEFT, padx=6)
+
+        ttk.Button(
+        buttons,
+        text="오답노트",
+        command=self.show_wrong_answers,
+     ).pack(side=tk.LEFT, padx=6)
 
         ttk.Label(root, textvariable=self.feedback_var).pack(pady=8)
         ttk.Label(root, textvariable=self.score_var).pack()
@@ -65,7 +80,27 @@ class VocabularyQuizApp:
         if check_answer(self.current, user_input):
             self.score += 1
             self.feedback_var.set("정답입니다!")
-        else:
-            self.feedback_var.set(f"오답입니다. 정답: {self.current.meaning}")
+     else:
+    self.feedback_var.set(f"오답입니다. 정답: {self.current.meaning}")
+
+    self.wrong_answers.append(
+        {
+            "word": self.current.term,
+            "answer": self.current.meaning,
+        }
+    )
         self.score_var.set(f"Score: {self.score}/{self.total}")
         self.check_button.state(["disabled"])
+def show_wrong_answers(self) -> None:
+    if not self.wrong_answers:
+        self.feedback_var.set("오답이 없습니다.")
+        return
+
+    result = []
+
+    for item in self.wrong_answers:
+        result.append(
+            f"{item['word']} → {item['answer']}"
+        )
+
+    self.feedback_var.set(" | ".join(result[:3]))
