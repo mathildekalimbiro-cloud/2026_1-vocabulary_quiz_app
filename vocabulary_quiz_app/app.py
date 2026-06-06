@@ -16,6 +16,7 @@ class VocabularyQuizApp:
         self.checked = False
         self.score = 0
         self.total = 0
+        self.wrong_count = 0
 
         self.default_font = font.nametofont("TkDefaultFont")
         self.default_font.configure(family="NanumGothic", size=12)
@@ -26,8 +27,7 @@ class VocabularyQuizApp:
 
         self.word_var = tk.StringVar(value="단어를 불러오는 중...")
         self.feedback_var = tk.StringVar(value="")
-        self.score_var = tk.StringVar(value="Score: 0/0")
-
+        self.score_var = tk.StringVar(value="Score: 0/0 | Wrong: 0")
         ttk.Label(root, text="영단어").pack(pady=(16, 4))
         ttk.Label(root, textvariable=self.word_var, font=("NanumGothic", 24)).pack()
 
@@ -66,6 +66,9 @@ class VocabularyQuizApp:
             self.score += 1
             self.feedback_var.set("정답입니다!")
         else:
+            self.wrong_count += 1
             self.feedback_var.set(f"오답입니다. 정답: {self.current.meaning}")
-        self.score_var.set(f"Score: {self.score}/{self.total}")
+        self.score_var.set(
+            f"Score: {self.score}/{self.total} | Wrong: {self.wrong_count}"
+        )
         self.check_button.state(["disabled"])
